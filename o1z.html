@@ -113,11 +113,29 @@
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
+            background-color: #f9fafb; /* 添加背景颜色作为备用 */
         }
         
-        /* 背景遮罩层 - 修改为透明，不再遮挡内容 */
+        /* 背景遮罩层 - 改为固定定位，避免震荡 */
         .bg-overlay {
-            background-color: rgba(255, 255, 255, 0);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.85); /* 调整透明度 */
+            z-index: -1;
+        }
+        
+        /* 导航栏样式 - 优化滚动效果 */
+        #navbar {
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            background-color: transparent;
+        }
+        
+        #navbar.scrolled {
+            background-color: white;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
         }
         
         /* 头像设置 */
@@ -163,6 +181,7 @@
             opacity: 0;
             pointer-events: none;
             box-shadow: 0 10px 25px rgba(22, 93, 255, 0.2);
+            transition: opacity 0.5s ease, transform 0.5s ease;
         }
         
         /* 背景音乐控制器 */
@@ -270,6 +289,9 @@
 </head>
 
 <body class="font-inter text-dark antialiased">
+    <!-- 背景遮罩层 -->
+    <div class="bg-overlay"></div>
+    
     <!-- 背景音乐控制器 -->
     <div id="music-player">
         <div id="music-toggle">
@@ -291,7 +313,7 @@
     <div id="hello-message" class="text-center">你好</div>
 
     <!-- 导航栏 -->
-    <header id="navbar" class="fixed w-full z-50 transition-all duration-300 bg-transparent">
+    <header id="navbar" class="fixed w-full z-50">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center py-4">
                 <a href="#" id="oeasy-logo" class="flex items-center space-x-2 cursor-pointer">
@@ -912,11 +934,9 @@
         window.addEventListener('scroll', function() {
             const navbar = document.getElementById('navbar');
             if (window.scrollY > 50) {
-                navbar.classList.add('bg-white', 'shadow-md');
-                navbar.classList.remove('bg-transparent');
+                navbar.classList.add('scrolled');
             } else {
-                navbar.classList.remove('bg-white', 'shadow-md');
-                navbar.classList.add('bg-transparent');
+                navbar.classList.remove('scrolled');
             }
         });
 
@@ -942,7 +962,7 @@
             item.addEventListener('click', function() {
                 mobileMenu.classList.add('-translate-y-full', 'opacity-0', 'invisible');
                 mobileMenu.classList.remove('translate-y-0', 'opacity-100', 'visible');
-                menuToggle.innerHTML = '<i class="fa fa-bars text-2xl"><i class="fa fa-bars text-2xl"></i>';
+                menuToggle.innerHTML = '<i class="fa fa-bars text-2xl"></i>';
             });
         });
 
@@ -953,12 +973,12 @@
         oeasyLogo.addEventListener('click', function() {
             // 显示消息
             helloMessage.style.opacity = '1';
-            helloMessage.style.pointerEvents = 'auto';
+            helloMessage.style.transform = 'translate(-50%, -50%) scale(1)';
             
             // 3秒后隐藏消息
             setTimeout(function() {
                 helloMessage.style.opacity = '0';
-                helloMessage.style.pointerEvents = 'none';
+                helloMessage.style.transform = 'translate(-50%, -50%) scale(0.9)';
             }, 3000);
         });
 
@@ -986,77 +1006,3 @@
         });
 
         // 音量控制
-        const musicVolume = document.getElementById('music-volume');
-        musicVolume.addEventListener('click', function(e) {
-            const rect = musicVolume.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const width = rect.width;
-            const percentage = Math.max(0, Math.min(1, x / width));
-            
-            // 更新音量
-            currentVolume = percentage;
-            bgMusic.volume = currentVolume;
-            
-            // 更新UI
-            volumeIndicator.style.width = `${percentage * 100}%`;
-            volumeDot.style.left = `${percentage * 100}%`;
-        });
-
-        // 允许拖动音量控制点
-        let isDragging = false;
-        volumeDot.addEventListener('mousedown', function() {
-            isDragging = true;
-        });
-
-        document.addEventListener('mousemove', function(e) {
-            if (!isDragging) return;
-            
-            const rect = musicVolume.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const width = rect.width;
-            const percentage = Math.max(0, Math.min(1, x / width));
-            
-            // 更新音量
-            currentVolume = percentage;
-            bgMusic.volume = currentVolume;
-            
-            // 更新UI
-            volumeIndicator.style.width = `${percentage * 100}%`;
-            volumeDot.style.left = `${percentage * 100}%`;
-        });
-
-        document.addEventListener('mouseup', function() {
-            isDragging = false;
-        });
-
-        // 平滑滚动
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                
-                const targetId = this.getAttribute('href');
-                const targetElement = document.querySelector(targetId);
-                
-                if (targetElement) {
-                    window.scrollTo({
-                        top: targetElement.offsetTop - 80, // 考虑导航栏高度
-                        behavior: 'smooth'
-                    });
-                }
-            });
-        });
-
-        // 页面加载动画
-        document.addEventListener('DOMContentLoaded', function() {
-            // 简单的页面加载动画示例
-            const body = document.body;
-            body.classList.add('opacity-0');
-            
-            setTimeout(function() {
-                body.classList.remove('opacity-0');
-                body.classList.add('opacity-100', 'transition-opacity', 'duration-500');
-            }, 100);
-        });
-    </script>
-</body>
-</html>
