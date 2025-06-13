@@ -115,9 +115,9 @@
             background-attachment: fixed;
         }
         
-        /* 背景遮罩层 - 降低透明度以增强可读性 */
+        /* 背景遮罩层 - 修改为透明，不再遮挡内容 */
         .bg-overlay {
-            background-color: rgba(255, 255, 255, 0.95);
+            background-color: rgba(255, 255, 255, 0);
         }
         
         /* 头像设置 */
@@ -364,7 +364,7 @@
     </section>
 
     <!-- 关于我 -->
-    <section id="about" class="py-20 bg-gray-50 bg-overlay">
+    <section id="about" class="py-20 bg-gray-50">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="max-w-5xl mx-auto">
                 <div class="flex flex-col md:flex-row items-center">
@@ -419,7 +419,7 @@
     </section>
 
     <!-- 技能 -->
-    <section id="skills" class="py-20 bg-white bg-overlay">
+    <section id="skills" class="py-20 bg-white">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center max-w-3xl mx-auto mb-16">
                 <span class="inline-block bg-primary/10 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-4">我的技能</span>
@@ -519,7 +519,7 @@
     </section>
 
     <!-- 项目 -->
-    <section id="projects" class="py-20 bg-gray-50 bg-overlay">
+    <section id="projects" class="py-20 bg-gray-50">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center max-w-3xl mx-auto mb-16">
                 <span class="inline-block bg-primary/10 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-4">我的项目</span>
@@ -613,7 +613,7 @@
     </section>
 
     <!-- 经历 -->
-    <section id="experience" class="py-20 bg-white bg-overlay">
+    <section id="experience" class="py-20 bg-white">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center max-w-3xl mx-auto mb-16">
                 <span class="inline-block bg-primary/10 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-4">我的经历</span>
@@ -698,7 +698,7 @@
     </section>
 
     <!-- 联系我 -->
-    <section id="contact" class="py-20 bg-gray-50 bg-overlay">
+    <section id="contact" class="py-20 bg-gray-50">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center max-w-3xl mx-auto mb-16">
                 <span class="inline-block bg-primary/10 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-4">联系我</span>
@@ -917,132 +917,4 @@
         });
 
         // 点击"oeasy"显示"你好"消息
-        const oeasyLogo = document.getElementById('oeasy-logo');
-        const helloMessage = document.getElementById('hello-message');
-        let messageTimer;
-
-        oeasyLogo.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            // 如果已有计时器，先清除
-            if (messageTimer) {
-                clearTimeout(messageTimer);
-            }
-            
-            // 显示消息并添加动画
-            helloMessage.style.opacity = '0';
-            helloMessage.style.display = 'block';
-            setTimeout(() => {
-                helloMessage.classList.add('animate-fade-in');
-                helloMessage.style.opacity = '1';
-            }, 10);
-            
-            // 设置计时器，3秒后隐藏消息
-            messageTimer = setTimeout(() => {
-                helloMessage.classList.remove('animate-fade-in');
-                helloMessage.classList.add('animate-fade-out');
-                setTimeout(() => {
-                    helloMessage.style.display = 'none';
-                    helloMessage.classList.remove('animate-fade-out');
-                }, 500);
-            }, 3000);
-        });
-
-        // 背景音乐控制
-        const bgMusic = document.getElementById('bg-music');
-        const musicToggle = document.getElementById('music-toggle');
-        const volumeIndicator = document.getElementById('volume-indicator');
-        const volumeDot = document.getElementById('volume-dot');
-        const musicVolume = document.getElementById('music-volume');
-        
-        // 初始状态 - 暂停
-        let isPlaying = false;
-        let currentVolume = 0.7; // 默认音量70%
-        bgMusic.volume = currentVolume;
-        
-        // 更新音量显示
-        function updateVolumeDisplay() {
-            const width = currentVolume * 100;
-            volumeIndicator.style.width = `${width}%`;
-            volumeDot.style.left = `${width}%`;
-        }
-        
-        // 音乐控制按钮点击事件
-        musicToggle.addEventListener('click', function() {
-            if (isPlaying) {
-                bgMusic.pause();
-                musicToggle.innerHTML = '<i class="fa fa-music"></i>';
-                isPlaying = false;
-            } else {
-                bgMusic.play();
-                musicToggle.innerHTML = '<i class="fa fa-pause"></i>';
-                isPlaying = true;
-            }
-        });
-        
-        // 音量控制
-        function handleVolumeChange(e) {
-            const rect = musicVolume.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const width = rect.width;
-            
-            // 计算音量百分比 (0-1)
-            currentVolume = Math.max(0, Math.min(1, x / width));
-            bgMusic.volume = currentVolume;
-            
-            // 更新显示
-            updateVolumeDisplay();
-            
-            // 如果音量为0且正在播放，暂停音乐
-            if (currentVolume === 0 && isPlaying) {
-                bgMusic.pause();
-                musicToggle.innerHTML = '<i class="fa fa-music"></i>';
-                isPlaying = false;
-            }
-            // 如果音量大于0且暂停，显示播放图标
-            else if (currentVolume > 0 && !isPlaying) {
-                musicToggle.innerHTML = '<i class="fa fa-music"></i>';
-            }
-        }
-        
-        // 点击音量条改变音量
-        musicVolume.addEventListener('click', handleVolumeChange);
-        
-        // 拖动音量控制
-        let isDragging = false;
-        
-        volumeDot.addEventListener('mousedown', function() {
-            isDragging = true;
-        });
-        
-        document.addEventListener('mousemove', function(e) {
-            if (isDragging) {
-                handleVolumeChange(e);
-            }
-        });
-        
-        document.addEventListener('mouseup', function() {
-            isDragging = false;
-        });
-        
-        // 触摸设备支持
-        volumeDot.addEventListener('touchstart', function() {
-            isDragging = true;
-        });
-        
-        document.addEventListener('touchmove', function(e) {
-            if (isDragging) {
-                handleVolumeChange(e.touches[0]);
-            }
-        });
-        
-        document.addEventListener('touchend', function() {
-            isDragging = false;
-        });
-        
-        // 初始化音量显示
-        updateVolumeDisplay();
-    </script>
-</body>
-</html>
-    
+        const oeasyLogo = document.getElementById('oeasy-logo
